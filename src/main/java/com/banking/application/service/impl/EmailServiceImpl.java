@@ -1,7 +1,7 @@
 package com.banking.application.service.impl;
 
 import com.banking.application.dto.EmailDetails;
-import com.bank.application.service.EmailService;
+import com.banking.application.service.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;

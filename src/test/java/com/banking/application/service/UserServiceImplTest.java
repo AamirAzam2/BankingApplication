@@ -1,13 +1,13 @@
-package com.bank.application.service;
+package com.banking.application.service;
 
-import com.banking.banking_app_apis.dto.BankResponse;
-import com.banking.banking_app_apis.dto.CreditDebitRequest;
-import com.banking.banking_app_apis.dto.EnquiryRequest;
-import com.bank.application.entity.User;
-import com.bank.application.exception.ResourceNotFoundException;
-import com.bank.application.repository.UserRepository;
-import com.bank.application.service.impl.UserServiceImpl;
-import com.bank.application.utils.AccountUtils;
+import com.banking.application.dto.BankResponse;
+import com.banking.application.dto.CreditDebitRequest;
+import com.banking.application.dto.EnquiryRequest;
+import com.banking.application.entity.User;
+import com.banking.application.exception.ResourceNotFoundException;
+import com.banking.application.repository.UserRepository;
+import com.banking.application.service.impl.UserServiceImpl;
+import com.banking.application.utils.AccountUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

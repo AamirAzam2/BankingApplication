@@ -64,14 +64,14 @@ A **RESTful Banking Backend** built with **Spring Boot 4** and **Java 21**. The 
 ## 📁 Project Structure
 
 ```
-com.bank.application
+BankApplication
 │
 ├── src/
 │   └── main/
 │       │
 │       ├── java/
 │       │   └── com/
-│       │       └── bank/
+│       │       └── banking/
 │       │           └── application/
 │       │               │
 │       │               ├── BankingApplication.java

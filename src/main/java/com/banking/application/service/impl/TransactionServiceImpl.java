@@ -1,9 +1,10 @@
 package com.banking.application.service.impl;
 
-import com.banking.banking_app_apis.dto.TransactionDto;
-import com.bank.application.entity.Transaction;
-import com.bank.application.repository.TransactionRepository;
-import com.bank.application.service.TransactionService;
+import com.banking.application.dto.TransactionRequest;
+import com.banking.application.entity.Transaction;
+import com.banking.application.repository.TransactionRepository;
+import com.banking.application.service.TransactionService;
+import com.banking.application.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ public class TransactionServiceImpl implements TransactionService {
     TransactionRepository transactionRepository;
 
     @Override
-    public TransactionResponse  saveTransaction (TransactionRequest transactionRequest) {
+    public TransactionResponse saveTransaction (TransactionRequest transactionRequest) {
         Transaction transaction = Transaction.builder()
                 .transactionType(transactionRequest.getTransactionType())
                 .accountNumber(transactionRequest.getAccountNumber())

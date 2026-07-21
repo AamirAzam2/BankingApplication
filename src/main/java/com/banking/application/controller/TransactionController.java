@@ -1,7 +1,7 @@
 package com.banking.application.controller;
 
-import com.banking.banking_app_apis.dto.TransactionDto;
-import com.bank.application.service.StatementService;
+import com.banking.application.dto.TransactionDto;
+import com.banking.application.service.StatementService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;

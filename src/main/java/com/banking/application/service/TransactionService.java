@@ -1,6 +1,6 @@
 package com.banking.application.service;
 
-import com.banking.banking_app_apis.dto.TransactionDto;
+import com.banking.application.dto.TransactionDto;
 
 public interface TransactionService {
 

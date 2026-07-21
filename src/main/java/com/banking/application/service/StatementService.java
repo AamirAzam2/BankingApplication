@@ -1,12 +1,11 @@
 package com.banking.application.service;
 
-import com.banking.banking_app_apis.dto.EmailDetails;
-import com.banking.banking_app_apis.dto.TransactionDto;
-import com.bank.application.entity.Transaction;
-import com.bank.application.entity.User;
-import com.bank.application.exception.ResourceNotFoundException;
-import com.bank.application.repository.TransactionRepository;
-import com.bank.application.repository.UserRepository;
+import com.banking.application.dto.EmailDetails;
+import com.banking.application.entity.Transaction;
+import com.banking.application.entity.User;
+import com.banking.application.exception.ResourceNotFoundException;
+import com.banking.application.repository.TransactionRepository;
+import com.banking.application.repository.UserRepository;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;

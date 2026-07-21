@@ -1,6 +1,6 @@
 package com.banking.application.service;
 
-import com.bank.application.repository.UserRepository;
+import com.banking.application.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
