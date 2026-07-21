@@ -9,36 +9,32 @@ import com.banking.application.exception.ResourceNotFoundException;
 import com.banking.application.repository.UserRepository;
 import com.banking.application.service.EmailService;
 import com.banking.application.service.TransactionService;
+import com.banking.application.service.UserService;
 import com.banking.application.utils.AccountUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
-public class UserServiceImpl implements UserService{
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    EmailService emailService;
-
-    @Autowired
-    TransactionService transactionService;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final TransactionService transactionService;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * Creating an account - saving a new user into the db
@@ -48,24 +44,24 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public BankResponse createAccount(UserRequest userRequest) {
 
-        if(userRepository.existsByEmail(userRequest.getEmail())) {
+        if(userRepository.existsByEmail(userRequest.email())) {
             throw new DuplicateAccountException("Account with this email already exists: "
-                    + userRequest.getEmail());
+                    + userRequest.email());
         }
 
         User newUser = User.builder()
-                .firstName(userRequest.getFirstName())
-                .lastName(userRequest.getLastName())
-                .otherName(userRequest.getOtherName())
-                .gender(userRequest.getGender())
-                .address(userRequest.getAddress())
-                .stateOfOrigin(userRequest.getStateOfOrigin())
+                .firstName(userRequest.firstName())
+                .lastName(userRequest.lastName())
+                .otherName(userRequest.otherName())
+                .gender(userRequest.gender())
+                .address(userRequest.address())
+                .stateOfOrigin(userRequest.stateOfOrigin())
                 .accountNumber(AccountUtils.generateAccountNumber())
                 .accountBalance(BigDecimal.ZERO)
-                .email(userRequest.getEmail())
-                .password(passwordEncoder.encode(userRequest.getPassword()))
-                .phoneNumber(userRequest.getPhoneNumber())
-                .alternativePhoneNumber(userRequest.getAlternativePhoneNumber())
+                .email(userRequest.email())
+                .password(passwordEncoder.encode(userRequest.password()))
+                .phoneNumber(userRequest.phoneNumber())
+                .alternativePhoneNumber(userRequest.alternativePhoneNumber())
                 .status("ACTIVE")
                 .role(Role.ROLE_USER)
                 .build();
@@ -94,15 +90,15 @@ public class UserServiceImpl implements UserService{
 
         emailService.sendEmailAlert(emailDetails);
 
-        return BankResponse.builder()
-                .responseCode(AccountUtils.ACCOUNT_CREATION_SUCCESS_CODE)
-                .responseMessage(AccountUtils.ACCOUNT_CREATION_SUCCESS_MESSAGE)
-                .accountInfo(AccountInfo.builder()
-                        .accountBalance(savedUser.getAccountBalance())
-                        .accountNumber(savedUser.getAccountNumber())
-                        .accountName(fullName)
-                        .build())
-                .build();
+        return new BankResponse(
+                AccountUtils.ACCOUNT_CREATION_SUCCESS_CODE,
+                AccountUtils.ACCOUNT_CREATION_SUCCESS_MESSAGE,
+                new AccountInfo(
+                        fullName,
+                        savedUser.getAccountBalance(),
+                        savedUser.getAccountNumber()
+                )
+        );
     }
 
 
@@ -130,11 +126,10 @@ public class UserServiceImpl implements UserService{
 
         emailService.sendEmailAlert(loginAlert);
 
-        return LoginResponse.builder()
-                .token(jwtTokenProvider.generateToken(authentication)
+        return new LoginResponse(
+                jwtTokenProvider.generateToken(authentication),
                 "Login successful"
-                )
-                .build();
+        );
     }
 
 
@@ -149,27 +144,31 @@ public class UserServiceImpl implements UserService{
     public BankResponse balanceEnquiry(EnquiryRequest enquiryRequest) {
 
         // Check if the provided account number exists in the DB
-        boolean isAccountExists = userRepository.existsByAccountNumber(enquiryRequest.getAccountNumber());
+        boolean isAccountExists = userRepository.existsByAccountNumber(enquiryRequest.accountNumber());
         if(!isAccountExists) {
             throw new ResourceNotFoundException("Account not found with account number: "
-                    + enquiryRequest.getAccountNumber());
+                    + enquiryRequest.accountNumber());
         }
 
-        User foundUser = userRepository.findByAccountNumber(enquiryRequest.getAccountNumber());
+        User foundUser = userRepository.findByAccountNumber(enquiryRequest.accountNumber())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Account not found: " + enquiryRequest.accountNumber()
+                ));
 
         String fullName = foundUser.getFirstName() + " "
                 + foundUser.getLastName()
                 + (foundUser.getOtherName() != null ? " " + foundUser.getOtherName() : "");
 
-        return BankResponse.builder()
-                .responseCode(AccountUtils.ACCOUNT_FOUND_CODE)
-                .responseMessage(AccountUtils.ACCOUNT_FOUND_MESSAGE)
-                .accountInfo(AccountInfo.builder()
-                        .accountBalance(foundUser.getAccountBalance())
-                        .accountNumber(foundUser.getAccountNumber())
-                        .accountName(fullName)
-                        .build())
-                .build();
+        return new BankResponse(
+                AccountUtils.ACCOUNT_FOUND_CODE,
+                AccountUtils.ACCOUNT_FOUND_MESSAGE,
+                new AccountInfo(
+                        fullName,
+                        foundUser.getAccountBalance(),
+                        foundUser.getAccountNumber()
+                )
+        );
+
     }
 
     @Override
@@ -205,7 +204,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public BankResponse creditAccount(CreditDebitRequest creditDebitRequest) {
+    public BankResponse creditAmount(CreditDebitRequest creditDebitRequest) {
 
 
         User user = userRepository.findByAccountNumber(creditDebitRequest.accountNumber())
@@ -228,9 +227,13 @@ public class UserServiceImpl implements UserService{
         );
 
         return new BankResponse(
-                "200",
-                "Amount credited successfully",
-                null
+                AccountUtils.ACCOUNT_CREDITED_SUCCESS_CODE,
+                AccountUtils.ACCOUNT_CREDITED_SUCCESS_MESSAGE,
+                new AccountInfo(
+                        user.getFirstName(),
+                        user.getAccountBalance(),
+                        user.getAccountNumber()
+                )
         );
     }
 
@@ -238,7 +241,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public BankResponse debitAccount(CreditDebitRequest request) {
+    public BankResponse debitAmount(CreditDebitRequest request) {
 
 
         User user = userRepository.findByAccountNumber(request.accountNumber())
@@ -268,9 +271,13 @@ public class UserServiceImpl implements UserService{
         );
 
         return new BankResponse(
-                "200",
-                "Amount debited successfully",
-                null
+                AccountUtils.ACCOUNT_DEBITED_SUCCESS_CODE,
+                AccountUtils.ACCOUNT_DEBITED_SUCCESS_MESSAGE,
+                new AccountInfo(
+                        user.getFirstName(),
+                        user.getAccountBalance(),
+                        user.getAccountNumber()
+                )
         );
     }
 
@@ -327,9 +334,13 @@ public class UserServiceImpl implements UserService{
         );
 
         return new BankResponse(
-                "200",
-                "Transfer completed successfully",
-                null
+                AccountUtils.TRANSFER_SUCCESS_CODE,
+                AccountUtils.TRANSFER_SUCCESS_MESSAGE,
+                new AccountInfo(
+                        source.getFirstName(),
+                        source.getAccountBalance(),
+                        source.getAccountNumber()
+                )
         );
     }
 }

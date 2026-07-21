@@ -1,5 +1,7 @@
 package com.banking.application.service.impl;
 
+import java.util.UUID;
+
 import com.banking.application.dto.TransactionRequest;
 import com.banking.application.entity.Transaction;
 import com.banking.application.repository.TransactionRepository;
@@ -17,9 +19,9 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionResponse saveTransaction (TransactionRequest transactionRequest) {
         Transaction transaction = Transaction.builder()
-                .transactionType(transactionRequest.getTransactionType())
-                .accountNumber(transactionRequest.getAccountNumber())
-                .amount(transactionRequest.getAmount())
+                .transactionType(transactionRequest.transactionType())
+                .accountNumber(transactionRequest.accountNumber())
+                .amount(transactionRequest.amount())
                 .status("SUCCESS")
                 .build();
 
@@ -27,7 +29,7 @@ public class TransactionServiceImpl implements TransactionService {
         System.out.println("Transaction saved successfully!");
 
         return new TransactionResponse(
-                saved.getTransactionId(),
+                UUID.fromString(saved.getTransactionId()),
                 saved.getTransactionType(),
                 saved.getAmount(),
                 saved.getAccountNumber(),

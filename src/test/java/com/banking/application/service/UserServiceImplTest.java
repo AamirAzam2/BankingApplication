@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,8 +40,7 @@ class UserServiceImplTest {
     void shouldReturnAccountNotFoundWhenAccountDoesNotExist() {
 
         // GIVEN
-        EnquiryRequest request = new EnquiryRequest();
-        request.setAccountNumber("1234567890");
+        EnquiryRequest request = new EnquiryRequest("1234567890");
 
         when(userRepository.existsByAccountNumber("1234567890")).thenReturn(false);
 
@@ -55,8 +55,7 @@ class UserServiceImplTest {
     void shouldReturnBankResponseWhenAccountExists() {
 
         // GIVEN
-        EnquiryRequest request = new EnquiryRequest();
-        request.setAccountNumber("2026316384");
+        EnquiryRequest request = new EnquiryRequest("2026316384");
 
         when(userRepository.existsByAccountNumber("2026316384")).thenReturn(true);
 
@@ -67,13 +66,13 @@ class UserServiceImplTest {
                 .lastName("Kakkar")
                 .build();
 
-        when(userRepository.findByAccountNumber("2026316384")).thenReturn(mockUser);
+        when(userRepository.findByAccountNumber("2026316384")).thenReturn(Optional.of(mockUser));
 
         // WHEN
         BankResponse response = userService.balanceEnquiry(request);
 
-        assertThat(response.getResponseCode()).isEqualTo(AccountUtils.ACCOUNT_FOUND_CODE);
-        assertThat(response.getAccountInfo().getAccountBalance()).isEqualTo(BigDecimal.valueOf(50000));
+        assertThat(response.responseCode()).isEqualTo(AccountUtils.ACCOUNT_FOUND_CODE);
+        assertThat(response.accountInfo().accountBalance()).isEqualTo(BigDecimal.valueOf(50000));
     }
 
 
@@ -81,8 +80,7 @@ class UserServiceImplTest {
     void shouldReturnAccountNotFoundWhenAmountCredit() {
 
         //GIVEN
-        EnquiryRequest request = new EnquiryRequest();
-        request.setAccountNumber("1234567890");
+        EnquiryRequest request = new EnquiryRequest("1234567890");
 
         when(userRepository.existsByAccountNumber("1234567890")).thenReturn(false);
 
@@ -96,11 +94,10 @@ class UserServiceImplTest {
     @Test
     void shouldCreditAmountWhenAccountExists() {
         //GIVEN
-        CreditDebitRequest request = new CreditDebitRequest();
-        request.setAccountNumber("2026316384");
-        request.setAmount(BigDecimal.valueOf(10000));
-
-        when(userRepository.existsByAccountNumber("2026316384")).thenReturn(true);
+        CreditDebitRequest request = new CreditDebitRequest(
+                "2026316384",
+                BigDecimal.valueOf(10000)
+        );
 
         User mockUser = User.builder()
                 .accountNumber("2026316384")
@@ -109,11 +106,11 @@ class UserServiceImplTest {
                 .lastName("Kakkar")
                 .build();
 
-        when(userRepository.findByAccountNumber("2026316384")).thenReturn(mockUser);
+        when(userRepository.findByAccountNumber("2026316384")).thenReturn(Optional.of(mockUser));
 
         BankResponse response = userService.creditAmount(request);
 
-        assertThat(response.getResponseCode()).isEqualTo(AccountUtils.ACCOUNT_CREDITED_SUCCESS_CODE);
+        assertThat(response.responseCode()).isEqualTo(AccountUtils.ACCOUNT_CREDITED_SUCCESS_CODE);
         assertThat(mockUser.getAccountBalance()).isEqualTo(BigDecimal.valueOf(60000));
         verify(userRepository, times(1)).save(any(User.class));
     }

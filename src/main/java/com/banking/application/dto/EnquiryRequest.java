@@ -7,5 +7,4 @@ public record EnquiryRequest(
         @NotBlank(message = "Account number is required")
         String accountNumber
 
-) {
-}
+) { }

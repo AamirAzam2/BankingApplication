@@ -1,7 +1,7 @@
 package com.banking.application.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public record TransactionResponse(
@@ -16,6 +16,6 @@ public record TransactionResponse(
 
         String status,
 
-        LocalDateTime createdAt
+        LocalDate createdAt
 
-) {}
+) { }

@@ -1,8 +1,9 @@
 package com.banking.application.service;
 
-import com.banking.application.dto.TransactionDto;
+import com.banking.application.dto.TransactionRequest;
+import com.banking.application.dto.TransactionResponse;
 
 public interface TransactionService {
 
-    void saveTransaction(TransactionDto transactionDto);
+    TransactionResponse saveTransaction(TransactionRequest transactionRequest);
 }

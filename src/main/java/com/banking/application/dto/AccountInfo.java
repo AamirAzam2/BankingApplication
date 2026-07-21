@@ -1,4 +1,4 @@
-package main.java.com.banking.application.dto;
+package com.banking.application.dto;
 
 import java.math.BigDecimal;
 
@@ -10,5 +10,4 @@ public record AccountInfo(
 
         String accountNumber
 
-) {
-}
+) { }

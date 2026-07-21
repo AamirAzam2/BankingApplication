@@ -8,5 +8,4 @@ public record BankResponse(
 
         AccountInfo accountInfo
 
-) {
-}
+) { }

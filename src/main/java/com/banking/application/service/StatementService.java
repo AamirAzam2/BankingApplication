@@ -1,6 +1,7 @@
 package com.banking.application.service;
 
 import com.banking.application.dto.EmailDetails;
+import com.banking.application.dto.TransactionResponse;
 import com.banking.application.entity.Transaction;
 import com.banking.application.entity.User;
 import com.banking.application.exception.ResourceNotFoundException;
@@ -25,6 +26,7 @@ import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -49,7 +51,7 @@ public class StatementService {
      * 3. send the file via email
      */
 
-    public Page<TransactionDto> generateStatement(
+    public Page<TransactionResponse> generateStatement(
             String accountNumber,
             String startDate,
             String endDate,
@@ -104,22 +106,17 @@ public class StatementService {
 
         emailService.sendEMailWithAttachment(emailDetails);
 
-        Page<TransactionDto> result = transactionPage.map(t -> new TransactionDto(
+        return transactionPage.map(transaction -> new TransactionResponse(
 
-                        transaction.getTransactionType(),
-
-                        transaction.getAmount(),
-
-                        transaction.getAccountNumber(),
-
-                        transaction.getStatus(),
-
-                        transaction.getCreatedAt()
+                UUID.fromString(transaction.getTransactionId()),
+                transaction.getTransactionType(),
+                transaction.getAmount(),
+                transaction.getAccountNumber(),
+                transaction.getStatus(),
+                transaction.getCreatedAt()
 
                 )
         );
-
-        return result;
     }
 
 
@@ -128,7 +125,7 @@ public class StatementService {
             String customerName,
             String startDate,
             String endDate,
-            List<Transaction> transactions
+            List<Transaction> transactionsForPdf
     ) throws Exception {
 
         Rectangle statementSize = new Rectangle(PageSize.A4);
@@ -173,7 +170,7 @@ public class StatementService {
         PdfPCell space = new PdfPCell();
         space.setBorder(0);
 
-        PdfPCell address = new PdfPCell(new Phrase("Customer Address: " + userAccount.getAddress()));
+        PdfPCell address = new PdfPCell(new Phrase("Customer Address: " + user.getAddress()));
         address.setBorder(0);
 
         statementInfoTable.addCell(customerInfo);
@@ -207,7 +204,7 @@ public class StatementService {
         transactionsTable.addCell(transactionAmount);
         transactionsTable.addCell(transactionStatus);
 
-        allForPdf.forEach(transaction -> {
+        transactionsForPdf.forEach(transaction -> {
             transactionsTable.addCell(new Phrase(transaction.getCreatedAt().toString()));
             transactionsTable.addCell(new Phrase(transaction.getTransactionType()));
             transactionsTable.addCell(new Phrase(transaction.getAmount().toString()));

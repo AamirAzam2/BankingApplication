@@ -39,5 +39,5 @@ public record UserRequest(
 
         String alternativePhoneNumber
 
-) {
+) { }
 

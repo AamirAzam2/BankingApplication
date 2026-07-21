@@ -1,10 +1,14 @@
 package com.banking.application.controller;
 
 import com.banking.application.dto.*;
-import com.banking.application.service.impl.UserService;
+import com.banking.application.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +43,7 @@ public class UserController {
             summary = "User Login",
             description = "Authenticate user and generate token"
     )
-    public ResponseEntity<BankResponse> login(
+    public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody LoginRequest loginRequest) {
 
         return ResponseEntity.ok(
