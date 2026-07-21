@@ -252,5 +252,15 @@ Swagger UI provides interactive documentation for all endpoints.
 
 **Query params:** `accountNumber`, `startDate` (yyyy-MM-dd), `endDate` (yyyy-MM-dd)
 
+
+### To run simple Mail server for Testing
+
+Run this on bash:
+
+docker run -d \
+--name mailpit \
+-p 1025:1025 \
+-p 8025:8025 \
+axllent/mailpit
 ---
 
