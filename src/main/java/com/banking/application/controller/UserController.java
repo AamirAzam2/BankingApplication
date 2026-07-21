@@ -1,7 +1,7 @@
 package com.banking.application.controller;
 
-import com.banking.banking_app_apis.dto.*;
-import com.banking.banking_app_apis.service.impl.UserService;
+import com.banking.application.dto.*;
+import com.banking.application.service.impl.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

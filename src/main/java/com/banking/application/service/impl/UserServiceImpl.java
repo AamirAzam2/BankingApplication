@@ -1,15 +1,15 @@
 package com.banking.application.service.impl;
 
-import com.bank.application.config.JwtTokenProvider;
-import com.bank.application.entity.Role;
-import com.bank.application.entity.User;
-import com.banking.banking_app_apis.dto.*;
-import com.bank.application.exception.DuplicateAccountException;
-import com.bank.application.exception.ResourceNotFoundException;
-import com.bank.application.repository.UserRepository;
-import com.bank.application.service.EmailService;
-import com.bank.application.service.TransactionService;
-import com.bank.application.utils.AccountUtils;
+import com.banking.application.config.JwtTokenProvider;
+import com.banking.application.entity.Role;
+import com.banking.application.entity.User;
+import com.banking.application.dto.*;
+import com.banking.application.exception.DuplicateAccountException;
+import com.banking.application.exception.ResourceNotFoundException;
+import com.banking.application.repository.UserRepository;
+import com.banking.application.service.EmailService;
+import com.banking.application.service.TransactionService;
+import com.banking.application.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -1,6 +1,6 @@
 package com.banking.application.service.impl;
 
-import com.banking.banking_app_apis.dto.EmailDetails;
+import com.banking.application.dto.EmailDetails;
 import com.bank.application.service.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

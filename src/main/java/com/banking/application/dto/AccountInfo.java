@@ -1,11 +1,4 @@
-package com.banking.application.dto;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
+package main.java.com.banking.application.dto;
 
 import java.math.BigDecimal;
 
