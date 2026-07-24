@@ -8,8 +8,8 @@
 		<version>4.0.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.banking</groupId>
-	<artifactId>banking-app-apis</artifactId>
+	<groupId>com.banking.application</groupId>
+	<artifactId>banking-app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>banking-app-apis</name>
 	<description>Demo project for Spring Boot</description>
